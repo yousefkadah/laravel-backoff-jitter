@@ -1,0 +1,44 @@
+{
+    "name": "yousefkadah/laravel-backoff-jitter",
+    "description": "Adds jitter to Laravel queue backoff delays so jobs that fail together do not retry in lockstep.",
+    "keywords": ["laravel", "queue", "backoff", "jitter", "retry", "thundering-herd"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yousef Kadah",
+            "email": "dev@forbit.co.il"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/queue": "^11.0 || ^12.0 || ^13.0",
+        "illuminate/support": "^11.0 || ^12.0 || ^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0 || ^10.0 || ^11.0",
+        "phpunit/phpunit": "^10.5 || ^11.0 || ^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "YousefKadah\\BackoffJitter\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "YousefKadah\\BackoffJitter\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "YousefKadah\\BackoffJitter\\BackoffJitterServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
