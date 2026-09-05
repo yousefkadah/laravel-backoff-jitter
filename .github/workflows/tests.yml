@@ -1,0 +1,47 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    # Laravel 11 is supported and tested locally, but is omitted here because every
+    # 11.x release carries an open security advisory and composer refuses to install
+    # it without disabling the advisory policy.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { php: '8.3', laravel: '12.*', testbench: '10.*', dependency-version: prefer-lowest }
+          - { php: '8.3', laravel: '12.*', testbench: '10.*', dependency-version: prefer-stable }
+          - { php: '8.4', laravel: '12.*', testbench: '10.*', dependency-version: prefer-stable }
+          - { php: '8.4', laravel: '13.*', testbench: '11.*', dependency-version: prefer-lowest }
+          - { php: '8.4', laravel: '13.*', testbench: '11.*', dependency-version: prefer-stable }
+
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - ${{ matrix.dependency-version }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pdo, sqlite, pdo_sqlite
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require --dev "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
+          composer require "illuminate/queue:${{ matrix.laravel }}" "illuminate/support:${{ matrix.laravel }}" "illuminate/contracts:${{ matrix.laravel }}" --no-interaction --no-update
+          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+
+      - name: Run tests
+        run: vendor/bin/phpunit
